@@ -1,0 +1,4 @@
+<FilesMatch "\.(tpl|cache|md|sql|sh|less|log)$">
+order allow,deny
+deny from all
+</FilesMatch>

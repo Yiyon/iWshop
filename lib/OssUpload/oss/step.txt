@@ -1,0 +1,58 @@
+1、conf.inc.php		ACCESS_ID/OSS_ACCESS_KEY	vCWANACvDnOvQ727/JoGkG7i6f8ZR3lfuV61VoZXV5253cB
+2、sdk.class,php	const DEFAULT_OSS_HOST = 'oss.aliyuncs.com';    改为   const DEFAULT_OSS_HOST = 'oss-cn-shenzhen.aliyuncs.com';
+3、域名绑定 http://docs.aliyun.com/?spm=5176.775975057.2.4.hy4HcF#/oss/getting-started/bucket-attributes&cname
+
+* ACL : bucket的权限
+----------------------------------------方法概览----------------------------------------
+
+括号中为demo/tutorial.php中的方法对照
+
+0、初始化OSSClient($oss_sdk_service = new ALIOSS();)
+sdk.class.php 的 构造函数
+
+
+1、新建Bucket(create_bucket)
+你可以通过以下代码来创建Bucket：
+$client->createBucket(array(
+    'Bucket' => 'your-bucket-name',
+));
+通过指定 Bucket 参数来制定Bucket的名字，Bucket的名称有全局唯一性，请尽量保证你的Bucket名称不与别人的重复。
+******注意：  为了便于移植，做个判断是否存在我们期望的bucket（是否需要？如果需要跳到2。方案2：写一个初始化的页面，可以初始化bucket及其设置）
+
+
+2、获取用户所拥有的Bucket（get_service）
+$buckets = $client->list_bucket();
+
+foreach ($buckets as $bucket) {
+    echo $bucket->getName() . "\n";
+}
+listBuckets 方法返回一个装有 \Aliyun\OSS\Models\Bucket 实例的array，你可以遍历这个array来获取每个Bucket的信息。
+
+
+3、处理异常
+当我们执行一些错误的操作，比如试图获取一个不存在的bucket的Object列表的时候，SDK会抛出类型为 \Aliyun\OSS\Exceptions\OSSException 的异常；另外，由于网络错误等原因，client也有可能抛出 \Aliyun\Common\Exceptions\ClientException 异常。你可以catch这些异常：
+try {
+    $client->listObjects(array(
+        'Bucket' => 'bucket-non-exist',
+    ));
+} catch (\Aliyun\OSS\Exceptions\OSSException $ex) {
+    echo "Error: " . $ex->getErrorCode() . "\n";
+} catch (\Aliyun\Common\Exceptions\ClientException $ex) {
+    echo "ClientError: " . $ex->getMessage() . "\n";
+}
+为了更简明地阐述SDK的使用，本文档的大多数实例代码都没有对异常进行处理。但是，在实际的开发中，为了实现程序的健壮性，你都应该捕获这些异常并处理它们。
+
+
+4、设置bucket website(set_bucket_website)
+function  set_bucket_website($obj){
+	$bucket = 'phpsdk1349849394';
+	$index_document='index.html';
+    $error_document='error.html';
+	
+    $response = $obj->set_bucket_website($bucket,$index_document,$error_document);
+	_format($response);	
+}
+
+
+
+

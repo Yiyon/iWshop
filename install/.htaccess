@@ -1,0 +1,4 @@
+<FilesMatch (.*).(sql)$>
+ order allow,deny
+ deny from all
+</FilesMatch>
